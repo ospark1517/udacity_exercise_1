@@ -1,38 +1,37 @@
 import express from "express";
 import fs from "fs";
+import path from "path";
 import resizeImage from "../../resize";
 import renameThumb from "../../rename";
 
 const images = express.Router();
 
 images.get("/", async (req, res) => {
-  const imageName: string = String(req.query.imageName);
+  const imageName: string = req.query.imageName as string;
   const imageWidth: number = Number(req.query.width);
   const imageHeight: number = Number(req.query.height);
 
+  const imagesPath = path.join(__dirname, "../../../images")
+  const thumbPath = path.join(__dirname, "../../../thumb")
+
   if (!imageName) {
-    res.send(400);
-    throw Error("IMAGE NAME NOT SPECIFIED");
+    return res.status(400).send("IMAGE NAME NOT SPECIFIED");
   }
 
-  if (!imageName.includes(".jpg")) {
-    res.send(400);
-    throw Error("Invalid file type. Must be .jpg");
+  if (!imageName.endsWith(".jpg")) {
+    return res.status(400).send("Invalid file type. Must be .jpg");
   }
 
-  if (!fs.existsSync(`/workspace/images/${imageName}`)) {
-    res.send(404);
-    throw Error("IMAGE DOES NOT EXIST");
+  if (!fs.existsSync(path.join(imagesPath, imageName))) {
+    return res.status(404).send("IMAGE DOES NOT EXIST");
   }
 
-  if (!imageWidth) {
-    res.send(400);
-    throw Error("WIDTH NOT SPECIFIED");
+  if (!req.query.width) {
+    return res.status(400).send("WIDTH NOT SPECIFIED");
   }
 
-  if (!imageHeight) {
-    res.send(400);
-    throw Error("HEIGHT NOT SPECIFIED");
+  if (!req.query.height) {
+    return res.status(400).send("HEIGHT NOT SPECIFIED");
   }
 
   if (
@@ -41,16 +40,14 @@ images.get("/", async (req, res) => {
     isNaN(imageHeight) ||
     isNaN(imageWidth)
   ) {
-    res.send(400);
-    throw Error("INVALID DIMENSIONS");
+    return res.status(400).send("INVALID DIMENSIONS");
   }
 
   await resizeImage(imageName, imageWidth, imageHeight);
 
   const newImageName = renameThumb(imageName);
 
-  res.sendFile(`/workspace/thumb/${newImageName}`);
-  res.status(200);
+  return res.sendFile(path.join(thumbPath, newImageName));
 });
 
 export default images;

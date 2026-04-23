@@ -61,13 +61,28 @@ Although not a requirement, we recommend using Git from the very beginning if yo
 [License](LICENSE.txt)
 
 
-## API Access:
-To access the API endpoint, first run:
+# Project Details:
+
+## Image Processing Function:
+The main image processing function is resizeImage, which can be found in the /utilities folder in the file resize.ts. It has a helper function called rename.ts that handles parts of the renaming logic. 
+
+Processed images are stored in the "/thumb" directory with the general naming format: "imagethumb_width_height.ext" where width and height denote the width and height specified at the time of their processing. This ensures that caching will happen if the user calls the images endpoint with the same parameters as when processing the image first time, as well as that a new thumbnail will be created if any parameters differ.
+
+## Routes
+There is one route in addition to the "home" route ('/'). That is the images route ('/images') which, when given the correct parameters, allows the user to access and carry out the image processing functionalities.
+
+## Testing
+Tests cover both the functionality of the image processing function as well as the API calls and endpoints to both the "home" page and the "images" endpoint. To run them, simply run:
+
+npm run test
+
+## API/Endpoint Access:
+To use this application, first run:
 
 npm run build
 npm run start
 
-This will start the server. An example of a valid endpoint would be:
+This will start the server. The homepage is a placeholder to let you know that it has successfuly started. In order to call the image processing functionality, users must access the images endpoint with valid parameters. An example of a valid endpoint would be:
 
 http://localhost:3001/images?filename=fjord.jpg&width=200&height=200
 

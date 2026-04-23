@@ -15,8 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
-const resize_1 = __importDefault(require("../../resize"));
-const rename_1 = __importDefault(require("../../rename"));
+const resize_1 = __importDefault(require("../../utilities/resize"));
+const rename_1 = __importDefault(require("../../utilities/rename"));
 const images = express_1.default.Router();
 images.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const imageName = req.query.imageName;
@@ -25,29 +25,40 @@ images.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const imagesPath = path_1.default.join(__dirname, "../../../images");
     const thumbPath = path_1.default.join(__dirname, "../../../thumb");
     if (!imageName) {
-        return res.status(400).send("IMAGE NAME NOT SPECIFIED");
+        res.status(400).send("IMAGE NAME NOT SPECIFIED");
+        return;
     }
     if (!imageName.endsWith(".jpg")) {
-        return res.status(400).send("Invalid file type. Must be .jpg");
+        res.status(400).send("Invalid file type. Must be .jpg");
+        return;
     }
     if (!fs_1.default.existsSync(path_1.default.join(imagesPath, imageName))) {
-        return res.status(404).send("IMAGE DOES NOT EXIST");
+        res.status(404).send("IMAGE DOES NOT EXIST");
+        return;
+    }
+    if (!req.query.width && !req.query.height) {
+        res.status(400).send("HEIGHT AND WIDTH NOT SPECIFIED");
+        return;
     }
     if (!req.query.width) {
-        return res.status(400).send("WIDTH NOT SPECIFIED");
+        res.status(400).send("WIDTH NOT SPECIFIED");
+        return;
     }
     if (!req.query.height) {
-        return res.status(400).send("HEIGHT NOT SPECIFIED");
+        res.status(400).send("HEIGHT NOT SPECIFIED");
+        return;
     }
     if (imageHeight <= 0 ||
         imageWidth <= 0 ||
         isNaN(imageHeight) ||
         isNaN(imageWidth)) {
-        return res.status(400).send("INVALID DIMENSIONS");
+        res.status(400).send("INVALID DIMENSIONS");
+        return;
     }
     yield (0, resize_1.default)(imageName, imageWidth, imageHeight);
     const newImageName = (0, rename_1.default)(imageName);
-    return res.sendFile(path_1.default.join(thumbPath, newImageName));
+    res.sendFile(path_1.default.join(thumbPath, newImageName));
+    return;
 }));
 exports.default = images;
 //# sourceMappingURL=image.js.map

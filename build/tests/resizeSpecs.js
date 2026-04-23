@@ -12,38 +12,43 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const fs_1 = __importDefault(require("fs"));
+const fs_1 = require("fs");
+const path_1 = __importDefault(require("path"));
 const sharp_1 = __importDefault(require("sharp"));
-const resize_1 = __importDefault(require("../resize"));
-const rename_1 = __importDefault(require("../rename"));
-describe("Testing resize function", () => {
+const resize_1 = __importDefault(require("../utilities/resize"));
+const rename_1 = __importDefault(require("../utilities/rename"));
+describe("resizeImage function", () => {
     const imageName = "palmtunnel.jpg";
     const width = 200;
     const height = 300;
     const outputName = (0, rename_1.default)(imageName);
-    const outputPath = `/workspace/thumb/${outputName}`;
-    beforeAll(() => {
-        if (fs_1.default.existsSync(outputPath)) {
-            fs_1.default.unlinkSync(outputPath);
+    const thumbPath = path_1.default.join(__dirname, "../../thumb");
+    const outputPath = path_1.default.join(thumbPath, outputName);
+    beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            yield fs_1.promises.access(outputPath);
+            yield fs_1.promises.unlink(outputPath);
         }
-    });
-    it('should reject when an image does not exist', () => __awaiter(void 0, void 0, void 0, function* () {
-        yield expectAsync((0, resize_1.default)("doesntexist.jpg", 200, 200))
-            .toBeRejectedWithError("IMAGE DOES NOT EXIST");
+        catch (_a) {
+            // file does not exist yet
+        }
+    }));
+    it("should reject when an image does not exist", () => __awaiter(void 0, void 0, void 0, function* () {
+        yield expectAsync((0, resize_1.default)("doesntexist.jpg", 200, 200)).toBeRejectedWithError("IMAGE DOES NOT EXIST");
     }));
     it("Should properly resize an image", () => __awaiter(void 0, void 0, void 0, function* () {
         yield (0, resize_1.default)(imageName, width, height);
-        expect(fs_1.default.existsSync(outputPath)).toBeTrue();
+        yield expectAsync(fs_1.promises.access(outputPath)).toBeResolved();
         const metadata = yield (0, sharp_1.default)(outputPath).metadata();
         expect(metadata.width).toEqual(width);
         expect(metadata.height).toEqual(height);
     }));
     it("should not recreate the thumbnail if it already exists", () => __awaiter(void 0, void 0, void 0, function* () {
         yield (0, resize_1.default)(imageName, width, height);
-        const firstStat = fs_1.default.statSync(outputPath);
+        const firstStat = yield fs_1.promises.stat(outputPath);
         const firstModified = firstStat.mtimeMs;
         yield (0, resize_1.default)(imageName, width, height);
-        const secondStat = fs_1.default.statSync(outputPath);
+        const secondStat = yield fs_1.promises.stat(outputPath);
         const secondModified = secondStat.mtimeMs;
         expect(secondModified).toEqual(firstModified);
     }));

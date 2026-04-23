@@ -7,4 +7,4 @@ const app = express();
 app.use("/", router);
 app.use("/images", images);
 
-export default app
+export default app;

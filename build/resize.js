@@ -13,19 +13,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = resizeImage;
-const fs_1 = __importDefault(require("fs"));
+const fs_1 = require("fs");
+const path_1 = __importDefault(require("path"));
 const sharp_1 = __importDefault(require("sharp"));
 const rename_1 = __importDefault(require("./rename"));
 function resizeImage(imageName, imageWidth, imageHeight) {
     return __awaiter(this, void 0, void 0, function* () {
         const newName = (0, rename_1.default)(imageName);
-        if (!fs_1.default.existsSync(`/workspace/images/${imageName}`)) {
+        const imagePath = path_1.default.join(__dirname, '../images');
+        const thumbPath = path_1.default.join(__dirname, '../thumb');
+        try {
+            yield fs_1.promises.access(path_1.default.join(imagePath, imageName));
+        }
+        catch (err) {
             throw new Error("IMAGE DOES NOT EXIST");
         }
-        if (!fs_1.default.existsSync(`/workspace/thumb/${newName}`)) {
-            yield (0, sharp_1.default)(`/workspace/images/${imageName}`)
+        try {
+            yield fs_1.promises.access(path_1.default.join(thumbPath, newName));
+            return;
+        }
+        catch (_a) {
+            yield (0, sharp_1.default)(path_1.default.join(imagePath, imageName))
                 .resize(imageWidth, imageHeight)
-                .toFile(`/workspace/thumb/${newName}`);
+                .toFile(path_1.default.join(thumbPath, newName));
         }
     });
 }

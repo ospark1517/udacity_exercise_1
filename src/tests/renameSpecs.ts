@@ -1,9 +1,9 @@
-import renameThumb from "../rename";
+import renameThumb from "../utilities/rename";
 
-describe("Testing rename function", () => {
+describe("renameThumb helper", () => {
   it("Should be defined", () => {
-    expect(renameThumb).toBeDefined()
-  })
+    expect(renameThumb).toBeDefined();
+  });
 
   it("Should properly rename a correct image name", () => {
     expect(renameThumb("test.jpg")).toEqual("test_thumb.jpg");
@@ -18,5 +18,4 @@ describe("Testing rename function", () => {
       "Invalid file type. Only JPG supported.",
     );
   });
-  
 });

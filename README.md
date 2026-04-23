@@ -59,3 +59,17 @@ Although not a requirement, we recommend using Git from the very beginning if yo
 ## License
 
 [License](LICENSE.txt)
+
+
+## API Access:
+To access the API endpoint, first run:
+
+npm run build
+npm run start
+
+This will start the server. An example of a valid endpoint would be:
+
+http://localhost:3001/images/?imageName=fjord.jpg&width=200&height=200
+
+imageName must be a valid image within the "images" directory.
+

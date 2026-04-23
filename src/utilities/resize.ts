@@ -8,7 +8,11 @@ export default async function resizeImage(
   imageWidth: number,
   imageHeight: number,
 ): Promise<void> {
-  const newName = renameThumb(imageName);
+  const thumbName = renameThumb(imageName);
+  const ext = path.extname(thumbName);
+  const base = path.basename(thumbName, ext);
+  const newName = `${base}_${imageWidth}_${imageHeight}${ext}`;
+
   const imagePath = path.join(__dirname, "../../images");
   const thumbPath = path.join(__dirname, "../../thumb");
 
@@ -17,6 +21,8 @@ export default async function resizeImage(
   } catch {
     throw new Error("IMAGE DOES NOT EXIST");
   }
+
+  await fs.mkdir(thumbPath, { recursive: true });
 
   try {
     await fs.access(path.join(thumbPath, newName));

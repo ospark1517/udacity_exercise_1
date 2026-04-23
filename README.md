@@ -69,7 +69,14 @@ npm run start
 
 This will start the server. An example of a valid endpoint would be:
 
-http://localhost:3001/images/?imageName=fjord.jpg&width=200&height=200
+http://localhost:3001/images?filename=fjord.jpg&width=200&height=200
 
-imageName must be a valid image within the "images" directory.
+
+Parameters are:
+
+-filename
+-width
+-height
+
+EXACTLY AS TYPED. filename must be a valid image within the "images" directory.
 

@@ -19,7 +19,7 @@ const resize_1 = __importDefault(require("../../utilities/resize"));
 const rename_1 = __importDefault(require("../../utilities/rename"));
 const images = express_1.default.Router();
 images.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const imageName = req.query.imageName;
+    const imageName = req.query.filename;
     const imageWidth = Number(req.query.width);
     const imageHeight = Number(req.query.height);
     const imagesPath = path_1.default.join(__dirname, "../../../images");
@@ -56,7 +56,10 @@ images.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         return;
     }
     yield (0, resize_1.default)(imageName, imageWidth, imageHeight);
-    const newImageName = (0, rename_1.default)(imageName);
+    const thumbName = (0, rename_1.default)(imageName);
+    const ext = path_1.default.extname(thumbName);
+    const base = path_1.default.basename(thumbName, ext);
+    const newImageName = `${base}_${imageWidth}_${imageHeight}${ext}`;
     res.sendFile(path_1.default.join(thumbPath, newImageName));
     return;
 }));

@@ -19,7 +19,10 @@ const sharp_1 = __importDefault(require("sharp"));
 const rename_1 = __importDefault(require("./rename"));
 function resizeImage(imageName, imageWidth, imageHeight) {
     return __awaiter(this, void 0, void 0, function* () {
-        const newName = (0, rename_1.default)(imageName);
+        const thumbName = (0, rename_1.default)(imageName);
+        const ext = path_1.default.extname(thumbName);
+        const base = path_1.default.basename(thumbName, ext);
+        const newName = `${base}_${imageWidth}_${imageHeight}${ext}`;
         const imagePath = path_1.default.join(__dirname, "../../images");
         const thumbPath = path_1.default.join(__dirname, "../../thumb");
         try {
@@ -28,6 +31,7 @@ function resizeImage(imageName, imageWidth, imageHeight) {
         catch (_a) {
             throw new Error("IMAGE DOES NOT EXIST");
         }
+        yield fs_1.promises.mkdir(thumbPath, { recursive: true });
         try {
             yield fs_1.promises.access(path_1.default.join(thumbPath, newName));
             return;

@@ -4,11 +4,14 @@ import sharp from "sharp";
 import resizeImage from "../utilities/resize";
 import renameThumb from "../utilities/rename";
 
-describe("resizeImage function", () => {
+describe("resizeImage function - Image Processing function", () => {
   const imageName = "palmtunnel.jpg";
   const width = 200;
   const height = 300;
-  const outputName = renameThumb(imageName);
+  const thumbName = renameThumb(imageName);
+  const ext = path.extname(thumbName);
+  const base = path.basename(thumbName, ext);
+  const outputName = `${base}_${width}_${height}${ext}`;
   const thumbPath = path.join(__dirname, "../../thumb");
   const outputPath = path.join(thumbPath, outputName);
 

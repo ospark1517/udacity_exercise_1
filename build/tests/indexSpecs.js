@@ -12,26 +12,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const node_test_1 = require("node:test");
 const supertest_1 = __importDefault(require("supertest"));
 const index_1 = __importDefault(require("../index"));
 require("jasmine");
 const request = (0, supertest_1.default)(index_1.default);
-(0, node_test_1.describe)("Image endpoint", () => {
-    (0, node_test_1.it)("returns 200 for the home route", () => __awaiter(void 0, void 0, void 0, function* () {
+describe("Image endpoint", () => {
+    it("returns 200 for the home route", () => __awaiter(void 0, void 0, void 0, function* () {
         yield request.get("/").expect(200);
     }));
-    (0, node_test_1.it)("returns 200 for a valid image resize request", () => __awaiter(void 0, void 0, void 0, function* () {
+    it("returns 200 for a valid image resize request", () => __awaiter(void 0, void 0, void 0, function* () {
         yield request
             .get("/images")
             .query({
-            imageName: "fjord.jpg",
+            filename: "fjord.jpg",
             width: 200,
             height: 200,
         })
             .expect(200);
     }));
-    (0, node_test_1.it)("returns 400 when imageName is missing", () => __awaiter(void 0, void 0, void 0, function* () {
+    it("returns 400 when fileName is missing", () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield request.get("/images").query({
             width: 200,
             height: 200,
@@ -39,50 +38,50 @@ const request = (0, supertest_1.default)(index_1.default);
         expect(response.status).toBe(400);
         expect(response.text).toContain("IMAGE NAME NOT SPECIFIED");
     }));
-    (0, node_test_1.it)("returns 400 for invalid file type", () => __awaiter(void 0, void 0, void 0, function* () {
+    it("returns 400 for invalid file type", () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield request.get("/images").query({
-            imageName: "fjord.png",
+            filename: "fjord.png",
             width: 200,
             height: 200,
         });
         expect(response.status).toBe(400);
         expect(response.text).toContain("Invalid file type. Must be .jpg");
     }));
-    (0, node_test_1.it)("returns 400 for missing width and height", () => __awaiter(void 0, void 0, void 0, function* () {
+    it("returns 400 for missing width and height", () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield request.get("/images").query({
-            imageName: "fjord.jpg",
+            filename: "fjord.jpg",
         });
         expect(response.status).toBe(400);
         expect(response.text).toContain("HEIGHT AND WIDTH NOT SPECIFIED");
     }));
-    (0, node_test_1.it)("returns 400 for missing width", () => __awaiter(void 0, void 0, void 0, function* () {
+    it("returns 400 for missing width", () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield request.get("/images").query({
-            imageName: "fjord.jpg",
+            filename: "fjord.jpg",
             height: 200,
         });
         expect(response.status).toBe(400);
         expect(response.text).toContain("WIDTH NOT SPECIFIED");
     }));
-    (0, node_test_1.it)("returns 400 for missing height", () => __awaiter(void 0, void 0, void 0, function* () {
+    it("returns 400 for missing height", () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield request.get("/images").query({
-            imageName: "fjord.jpg",
+            filename: "fjord.jpg",
             width: 200,
         });
         expect(response.status).toBe(400);
         expect(response.text).toContain("HEIGHT NOT SPECIFIED");
     }));
-    (0, node_test_1.it)("returns 400 for invalid dimensions", () => __awaiter(void 0, void 0, void 0, function* () {
+    it("returns 400 for invalid dimensions", () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield request.get("/images").query({
-            imageName: "fjord.jpg",
+            filename: "fjord.jpg",
             width: -1,
             height: 200,
         });
         expect(response.status).toBe(400);
         expect(response.text).toContain("INVALID DIMENSIONS");
     }));
-    (0, node_test_1.it)("returns 404 when the image does not exist", () => __awaiter(void 0, void 0, void 0, function* () {
+    it("returns 404 when the image does not exist", () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield request.get("/images").query({
-            imageName: "doesnotexist.jpg",
+            filename: "doesnotexist.jpg",
             width: 200,
             height: 200,
         });

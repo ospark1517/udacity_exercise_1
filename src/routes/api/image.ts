@@ -7,7 +7,7 @@ import renameThumb from "../../utilities/rename";
 const images = express.Router();
 
 images.get("/", async (req: Request, res: Response): Promise<void> => {
-  const imageName: string = req.query.imageName as string;
+  const imageName: string = req.query.filename as string;
   const imageWidth: number = Number(req.query.width);
   const imageHeight: number = Number(req.query.height);
 
@@ -56,7 +56,10 @@ images.get("/", async (req: Request, res: Response): Promise<void> => {
 
   await resizeImage(imageName, imageWidth, imageHeight);
 
-  const newImageName = renameThumb(imageName);
+  const thumbName = renameThumb(imageName);
+  const ext = path.extname(thumbName);
+  const base = path.basename(thumbName, ext);
+  const newImageName = `${base}_${imageWidth}_${imageHeight}${ext}`;
 
   res.sendFile(path.join(thumbPath, newImageName));
   return;
